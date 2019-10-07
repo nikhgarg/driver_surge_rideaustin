@@ -4,19 +4,17 @@ This pipeline contains code to replicate the plots in:
 
 If you use the code in this directory, please cite the above work.
 
-Data source: https://data.world/ride-austin/ride-austin-june-6-april-13
+**Data source**: https://data.world/ride-austin/ride-austin-june-6-april-13
 
-Usage instructions:
+**Usage instructions**:
 1. Download data from above link (Rides_DataA.csv, Rides_DataB.csv) and put in data/rideaustin/ folder
 1. Create a plots/ folder in home directory
-1. Run code as outlined below for various purposes.
+1. Run code as outlined below for various purposes. In general, pipeline.py contains a pipeline to run the analyses and data-preprocessing. The pipeline function takes in as input a settings dictionary, with several examples in settings.py.
 
-In general, pipeline.py contains a pipeline to run all the analyses and data-preprocessing. The pipeline function takes in as input a settings dictionary, with several examples in settings.py.
-
-To obtain a clean version of the dataset with clean, merged rows and errors replaced:
+**To obtain a clean version of the dataset** with merged rows and errors replaced:
 1. Run pipeline(settings_server_preprocessing)
 
-To replicate all plots in paper from scratch:
+**To replicate all plots in paper from scratch**:
 1. Run pipeline(settings_server_2months). (warning: default settings use 55 cores, to do the matching in parallel. With this many cores, the code takes a few hours.)
 1. Run pipeline(settings_plotting_2months). This code will use the output of the above command and generate all the plots.
 
