@@ -3,6 +3,7 @@ import numpy as np
 from functools import partial
 
 from payment.payment_function_templates import *
+from payment.payment_functions_fakefactor import *
 
 #Note: Surge functions that have different multipliers/additives per surge factor, so that the overall payment during each surge remains the same, as in the theory
 
@@ -12,8 +13,11 @@ payment_reverse_engineer = partial (reverse_engineer_withparams, multiplier = re
 ## Pure multiplicative and additive surge valid for entire 2 month reverse engineered dataset
 multipliers_by_surge = {1.0: 1.178897671343293, 1.25: 1.2159457663074136, 1.5: 1.2160108075477183, 2.0: 1.2208759784698486, 1.75: 1.2208770494908094, 2.25: 1.2109917122870684, 2.5: 1.2150291353464127, 3.0: 1.2011436047032475, 2.75: 1.1996255721896887, 3.25: 1.1975256726145744, 3.5: 1.1947848368436098, 4.0: 1.1625474784523249, 3.75: 1.1804979294538498, 4.25: 1.1852897703647614, 4.5: 1.1432667262852192, 5.0: 1.1957231909036636}
 additives_by_surge = {1.0: 50.0, 1.25: 9.453221783041954, 1.5: 9.58840111270547, 2.0: 9.615769982337952, 1.75: 9.59403170272708, 2.25: 9.957537800073624, 2.5: 9.92576852440834, 3.0: 10.548560321331024, 2.75: 10.640523582696915, 3.25: 10.865232348442078, 3.5: 11.063981056213379, 4.0: 12.741836160421371, 3.75: 12.023007869720459, 4.25: 11.503374576568604, 4.5: 14.593739807605743, 5.0: 11.09071969985962}
+additives_by_surge_withmin = {1.0: 50.0, 1.25: 9.451798722147942, 1.5: 9.588177595287561, 2.0: 9.615769982337952, 1.75: 9.594031795859337, 2.25: 9.957537800073624, 2.5: 9.92576852440834, 3.0: 10.548560321331024, 2.75: 10.640523582696915, 3.25: 10.865232348442078, 3.5: 11.063981056213379, 4.0: 12.741836160421371, 3.75: 12.023009359836578, 4.25: 11.503374576568604, 4.5: 14.593738317489624, 5.0: 11.09071969985962}
 pure_multiplicative_bysurgefactor = partial(pure_multiplicative_bysurgefactor_withparams, multipliers_by_surge=multipliers_by_surge, col_name = 'pure_mult_bysurgefactor_fare')
 pure_additive_bysurgefactor = partial(pure_additive_bysurgefactor_withparams, additives_by_surge=additives_by_surge, multipliers_by_surge=multipliers_by_surge, col_name = 'pure_addsurge_bysurgefactor_fare')
+#payment function with min and base fare
+withmin_additive_bysurgefactor = partial(withmin_additive_bysurgefactor_withparams, additives_by_surge = additives_by_surge_withmin, col_name = 'withmin_addsurge_bysurgefactor_fare')
 
 
 ## Pure multiplicative and additive surge valid for 10 hours of peak surge
@@ -49,19 +53,33 @@ payment_function_24hrs_names = ['mimic_fare', 'pure_mult_bysurgefactor_24hrs_far
 payment_functions_3weeks = [payment_reverse_engineer,pure_multiplicative_bysurgefactor_3weeks, pure_additive_bysurgefactor_3weeks]
 payment_function_3weeks_names = ['mimic_fare', 'pure_mult_bysurgefactor_3weeks_fare', 'pure_addsurge_bysurgefactor_3weeks_fare']
 
-payment_functions_2months = [payment_reverse_engineer,pure_multiplicative_bysurgefactor, pure_additive_bysurgefactor]
-payment_function_2months_names = ['mimic_fare', 'pure_mult_bysurgefactor_fare', 'pure_addsurge_bysurgefactor_fare']
+payment_functions_2months = [payment_reverse_engineer,pure_multiplicative_bysurgefactor, pure_additive_bysurgefactor, withmin_additive_bysurgefactor]
+payment_function_2months_names = ['mimic_fare', 'pure_mult_bysurgefactor_fare', 'pure_addsurge_bysurgefactor_fare', 'withmin_addsurge_bysurgefactor_fare']
+
+payment_functions_2months_withmin = [payment_reverse_engineer, withmin_additive_bysurgefactor]
+payment_function_2months_withmin_names = ['mimic_fare', 'withmin_addsurge_bysurgefactor_fare']
+
+
+payment_functions_2months_pureonly = [pure_multiplicative_bysurgefactor, pure_additive_bysurgefactor]
+payment_function_2months_pureonly_names = ['pure_mult_bysurgefactor_fare', 'pure_addsurge_bysurgefactor_fare']
+
+# Lists with the payment functions
+payment_functions_2months_withmin_fakefactor = [payment_reverse_engineer, withmin_additive_byfakesurgefactor]
+payment_function_2months_withmin_names_fakefactor = ['mimic_fare', 'withmin_addsurge_byfakesurgefactor_fare']
+
 
 all_names = list(set([x for y in [payment_function_10hrs_names, payment_function_24hrs_names, payment_function_3weeks_names, payment_function_2months_names] for x in y]))
 func_filesave_names = {x: x.replace('_', '').replace('bysurgefactor', 'BSF') for x in all_names}
 
-func_pretty_names = {'mimic_fare': 'Existing Payment',
-                        'pure_mult_bysurgefactor_fare': 'Multiplicative Surge',
-                        'pure_addsurge_bysurgefactor_fare':'Additive Surge',
-                        'pure_mult_bysurgefactor_10hrs_fare':'Multiplicative Surge',
-                        'pure_addsurge_bysurgefactor_10hrs_fare':'Additive Surge',
-                        'pure_mult_bysurgefactor_24hrs_fare':'Multiplicative Surge',
-                        'pure_addsurge_bysurgefactor_24hrs_fare':'Additive Surge',
-                        'pure_mult_bysurgefactor_3weeks_fare':'Multiplicative Surge',
-                        'pure_addsurge_bysurgefactor_3weeks_fare':'Additive Surge',
+func_pretty_names = {'mimic_fare': 'Status quo',
+                        'pure_mult_bysurgefactor_fare': 'Multiplicative surge',
+                        'pure_addsurge_bysurgefactor_fare':'Additive surge',
+                        'pure_mult_bysurgefactor_10hrs_fare':'Multiplicative surge',
+                        'pure_addsurge_bysurgefactor_10hrs_fare':'Additive surge',
+                        'pure_mult_bysurgefactor_24hrs_fare':'Multiplicative surge',
+                        'pure_addsurge_bysurgefactor_24hrs_fare':'Additive surge',
+                        'pure_mult_bysurgefactor_3weeks_fare':'Multiplicative surge',
+                        'pure_addsurge_bysurgefactor_3weeks_fare':'Additive surge',
+                        'withmin_addsurge_bysurgefactor_fare':'Additive surge with base fare',
+                        'withmin_addsurge_byfakesurgefactor_fare':'Additive surge with base fare',
 }

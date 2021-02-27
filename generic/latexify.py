@@ -103,7 +103,7 @@ def saveimage(name, fig = plt, extension = 'pdf', folder = 'plots/', close= True
     plt.grid(False, axis = "x")
     plt.grid(False, axis = "y")
 
-    fig.savefig('{}{}.{}'.format(folder,name, extension), bbox_inches = 'tight')
+    fig.savefig('{}{}.{}'.format(folder,name, extension), bbox_inches = 'tight', dpi = 500)
     if close:
         plt.close()
 latexify()

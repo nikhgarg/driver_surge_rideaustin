@@ -13,7 +13,7 @@ import pytz
     # There are many trips with incorrect distances, lengths; these are replaced by nan.
     # Don't drop trips, instead replace with nan in appropriate place so that they propagate in the session calculations
 
-def clean_and_merge_datafiles(folder = 'data/rideaustin/', filelabel = 'rides'):
+def clean_and_merge_datafiles(folder = 'data/rideaustin/', filelabel = 'rides3', override_start_with_dispatch = False):
     filename1 = 'Rides_DataA.csv'
     filename2 = 'Rides_DataB.csv'
 
@@ -31,12 +31,16 @@ def clean_and_merge_datafiles(folder = 'data/rideaustin/', filelabel = 'rides'):
     date_fields_to_convert = ['started_on', 'completed_on', 'dispatched_on']
     date_fields_newnames = ['start_hour', 'end_hour', 'dispatch_hour']
 
+    if override_start_with_dispatch:
+        print("Replacing start_hour with dispatch hour (Unusual; remove if you don't understand why)")
+        austin.loc[:,'started_on'] = austin.loc[:,'dispatched_on']
+
     for field in date_fields_to_convert:
         print('Converting: {}'.format(field))
         # print(austin[field].head())
         austin.loc[:,field] = pd.to_datetime(austin[field], format= '%Y-%m-%d %H:%M:%S')
 
-        if field == 'dispatched_on': #doesn't have timezone in raw data, but is in UTC time
+        if (field == 'dispatched_on') or (override_start_with_dispatch and (field == 'started_on')): #doesn't have timezone in raw data, but is in UTC time
             austin.loc[:,field] =austin[field].apply(pytz.timezone('UTC').localize)
 
         austin.loc[:,field] =austin[field].apply(lambda x: x.astimezone(pytz.timezone('America/Chicago'))) #convert all time zones to Central time

@@ -31,13 +31,15 @@ def print_weighted_mean_variance_session_earnings(df_session, payment_function_n
     print('Per hour in session')
     for func in payment_function_names:
         print(func)
-        print(weighted_mean_variance(df_session, '{}_perhour'.format(func), 'session_length'))
+        mean, var = weighted_mean_variance(df_session, '{}_perhour'.format(func), 'session_length')
+        print(mean, var, np.sqrt(var))
         print()
 
     print('Overall in session')
     for func in payment_function_names:
         print(func)
-        print(weighted_mean_variance(df_session, '{}'.format(func), 'session_length'))
+        mean, var = weighted_mean_variance(df_session, '{}'.format(func), 'session_length')
+        print(mean, var, np.sqrt(var))
         print()
 
 def plot_weighted_histogram_session_earnings(df_session, payment_function_names, func_filesave_names = func_filesave_names, func_pretty_names = func_pretty_names, plt_label = '', save_fig = False, colors = None):
