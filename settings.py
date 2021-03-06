@@ -56,7 +56,7 @@ relevant_columns = [
 settings_datapreprocessing = {"relevant_columns": relevant_columns, "filelabel": "rides3", "folder": "data/rideaustin/"}
 
 settings_server_2months = {
-    "number_of_processors": 55,
+    "number_of_processors": 5,
     "relevant_columns": relevant_columns,
     "label": "rideswithaddmin_disptime",
     "preprocessed_data_filelabel": "ridesfinal",
@@ -122,7 +122,7 @@ plotting_differences = {
         "plot_tripindifference_histogram",
         "plot_drivershift_earnings",
         "supplementary_facts",
-        "plot_tripindifference_variancebyaddmult",
+        # "plot_tripindifference_variancebyaddmult",
     ],
     "plot_colors": [
         sns.light_palette("black", 2, input="xkcd").as_hex()[-1],
@@ -146,6 +146,8 @@ settings_plotting_fakefactor["outputrunlabel"] = "fakedata"
 settings_plotting_fakefactor["payment_functions"] = payment_functions_2months_withmin_fakefactor
 settings_plotting_fakefactor["payment_function_names"] = payment_function_2months_withmin_names_fakefactor
 settings_plotting_fakefactor["ylim"] = (-60, 40)
+settings_plotting_fakefactor["functions_to_run"] = ["plot_tripindifference_histogram"]
+
 
 settings_plotting_2months_supplement = copy.copy(settings_server_2months)
 settings_plotting_2months_supplement.update(plotting_differences)

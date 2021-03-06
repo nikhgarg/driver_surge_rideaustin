@@ -178,9 +178,10 @@ def surge_close_to_capitol_markovian(runlabel, df):
         lambda x: haversine(lat_capitol, long_capitol, x["start_location_lat"], x["start_location_long"]), axis=1
     )
     df3days_closetocap = df3days.query("miles_from_capitol < 5")
-    df3days_closetocap.loc[:, "rounded_time_to_10_minutes"] = df3days_closetocap.eval(
-        "((dispatch_hour*60)//6)/10 - @minn - @offset"
-    )  # rounded every 10 minutes
+    df3days_closetocap.loc[:, "rounded_time_to_10_minutes"] = ((df3days_closetocap["dispatch_hour"] * 60) // 6) / 10 - minn - offset
+    # df3days_closetocap.eval(
+    #     "((dispatch_hour*60)//6)/10 - @minn - @offset"
+    # )  # rounded every 10 minutes
     sns.lineplot(x="rounded_time_to_10_minutes", y="surge_factor", data=df3days_closetocap)
     plt.xlabel("Time (hours from beginning of period)", fontsize=18)
     plt.ylabel("Average Surge Factor", fontsize=25)
@@ -198,6 +199,8 @@ def dispatch_vs_trip(runlabel, df):
 
 
 def supplementary_pipeline(outputrunlabel, df, matching_functions, payment_functions_names, payment_functions_prettynames):
+
+    platform_stability(outputrunlabel, df)
     scatter_fares(outputrunlabel, df)
     scatter_fares(outputrunlabel, df, farey="pure_mult_bysurgefactor_fare", namey="Multiplicative surge")
 

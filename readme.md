@@ -1,6 +1,6 @@
 This pipeline contains code to replicate the plots in:
 
-"Driver Surge Pricing." Nikhil Garg and Hamid Nazerzadeh. 2019. URL: https://gargnikhil.com/files/papers/garg_driversurge.pdf.
+"Driver Surge Pricing." Nikhil Garg and Hamid Nazerzadeh. Management Science, 2021. URL: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3390346.
 
 If you use the code in this directory, please cite the above work.
 
@@ -16,7 +16,7 @@ If you use the code in this directory, please cite the above work.
 
 **To replicate all plots in paper from scratch**:
 1. Run pipeline(settings_server_2months). (warning: default settings use 55 cores, to do the matching in parallel. With this many cores, the code takes a few hours.)
-1. Run pipeline(settings_plotting_2months). This code will use the output of the above command and generate all the plots.
+1. Run pipeline(settings_plotting_2months). This code will use the output of the above command and generate the plots.
 
 
 /data_preprocessing/
